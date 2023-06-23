@@ -26,31 +26,36 @@ def third_order(kx, ky, scale):
 a_Cr = 0.604
 a_Au = 0.288
 
-Au_real = first_order(X, Y, 2*np.pi/a_Au)
-Cr_real = second_order(X, Y, 2*np.pi/a_Cr)
+Au_real = first_order(X, Y, 2*np.pi/a_Au)       ### IMPORTANT ###
+Cr_real = second_order(X, Y, 2*np.pi/a_Cr)      ### IMPORTANT ###
 moire_real = Au_real * Cr_real
 
 Cr_reciprocal = np.fft.fftshift(np.fft.fft2(Cr_real))
 Au_reciprocal = np.fft.fftshift(np.fft.fft2(Au_real))
 moire_reciprocal = np.fft.fftshift(np.fft.fft2(moire_real))
 
-# plt.imshow(Cr_real, cmap=cm.jet)
-# plt.imshow(Au_real, cmap=cm.jet)
-# plt.imshow(moire_real, norm='linear', cmap=cm.jet)
 
-# plt.imshow(abs(Cr_reciprocal), vmin=0, vmax=1000000, cmap=cm.jet)
-# plt.imshow(abs(Au_reciprocal), cmap=cm.jet)
-# plt.imshow(abs(moire_reciprocal), cmap=cm.jet)
+fig = plt.figure(layout="constrained")
+ax_dict = fig.subplot_mosaic(
+    [['Au', 'Au_reciprocal'],
+     ['Cr', 'Cr_reciprocal'],
+     ['moire_real', 'moire_reciprocal']]
+)
 
-
-fig, ax = plt.subplot_mosaic([['Au', 'Cr', 'Moire']], figsize=(5, 5, 5))
-
-ax['Au'].imshow(Au_real, cmap=cm.jet)
-ax['Au'].set_title('Au')
-ax['Cr'].imshow(Cr_real, cmap=plt.cm.hot, extent=extent)
-ax['Cr'].set_title('Cr')
-ax['Moire'].imshow(moire_real, norm='linear', cmap=cm.jet)
-ax['Moire'].set_title('Moire')
-# ax['Au'].axis('off')  # clear x-axis and y-axis
+ax_dict['Au'].imshow(Au_real, cmap=cm.jet)
+ax_dict['Au'].set_title('Au')
+ax_dict['Au'].axis('off')
+ax_dict['Au_reciprocal'].imshow(abs(Au_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
+ax_dict['Au_reciprocal'].axis('off')
+ax_dict['Cr'].imshow(Cr_real, cmap=plt.cm.hot)
+ax_dict['Cr'].set_title('Cr')
+ax_dict['Cr'].axis('off')
+ax_dict['Cr_reciprocal'].imshow(abs(Cr_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
+ax_dict['Cr_reciprocal'].axis('off')
+ax_dict['moire_real'].imshow(moire_real, cmap=cm.jet)
+ax_dict['moire_real'].set_title('Moire')
+ax_dict['moire_real'].axis('off')
+ax_dict['moire_reciprocal'].imshow(abs(moire_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
+ax_dict['moire_reciprocal'].axis('off')
 
 plt.show()

@@ -6,8 +6,8 @@ import matplotlib.cbook as cbook
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch
 
-x = np.linspace(-20, 20, 4000)
-y = np.linspace(-20, 20, 4000)
+x = np.linspace(-10, 10, 1000)
+y = np.linspace(-10, 10, 1000)
 X, Y = meshgrid(x, y)
 
 
@@ -44,17 +44,12 @@ ax_dict = fig.subplot_mosaic(
 
 ax_dict['Au'].imshow(Au_real, cmap=cm.jet)
 ax_dict['Au'].set_title('Au')
-ax_dict['Au'].axis('off')
 ax_dict['Au_reciprocal'].imshow(abs(Au_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
-ax_dict['Au_reciprocal'].axis('off')
 ax_dict['Cr'].imshow(Cr_real, cmap=plt.cm.hot)
 ax_dict['Cr'].set_title('Cr')
-ax_dict['Cr'].axis('off')
 ax_dict['Cr_reciprocal'].imshow(abs(Cr_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
-ax_dict['Cr_reciprocal'].axis('off')
 ax_dict['moire_real'].imshow(moire_real, cmap=cm.jet)
 ax_dict['moire_real'].set_title('Moire')
-ax_dict['moire_real'].axis('off')
 ax_dict['moire_reciprocal'].imshow(abs(moire_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
 ax_dict['moire_reciprocal'].axis('off')
 

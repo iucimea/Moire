@@ -18,15 +18,15 @@ from scipy.ndimage import gaussian_filter
 
 
 for i in range(0, 1):
-hex_grid1, h_ax = create_hex_grid(nx=150,
-                                  ny=150,
-                                  rotate_deg=0,
-                                  min_diam=0.288,
-                                  crop_circ=20,
-                                  # edge_color='b',
-                                  do_plot=False)
+    hex_grid1, h_ax = create_hex_grid(nx=150,
+                                      ny=150,
+                                      rotate_deg=0,
+                                      min_diam=0.288,
+                                      crop_circ=20,
+                                      # edge_color='b',
+                                      do_plot=False)
 
-hex_grid2, dummy = create_hex_grid(nx=75,
+    hex_grid2, dummy = create_hex_grid(nx=75,
                                    ny=75,
                                    min_diam=0.604,
                                    rotate_deg=0,  # i/10,

@@ -1,6 +1,3 @@
-from pylab import meshgrid, cm, imshow, contour, clabel, figure, title, show
-import numpy as np
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
 from matplotlib.path import Path
@@ -10,7 +7,7 @@ x = np.linspace(-10, 10, 1000)
 y = np.linspace(-10, 10, 1000)
 X, Y = meshgrid(x, y)
 
-
+# region Function Definitions
 def first_order(kx, ky, scale):
     return np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) * np.cos(
         -0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)
@@ -36,10 +33,12 @@ def first_order_30deg(kx, ky, scale):
            * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)
 
+
 def second_order_30deg(kx, ky, scale):
     return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 2
+
 
 def third_order_30deg(kx, ky, scale):
     return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
@@ -53,11 +52,25 @@ def fourth_order_30deg(kx, ky, scale):
            * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 4
 
 
+def fifth_order_30deg(kx, ky, scale):
+    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
+           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
+           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 5
+
+
+def sixth_order_30deg(kx, ky, scale):
+    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
+           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
+           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 6
+
+
+# endregion
+
 a_Cr = 0.604
 a_Au = 0.288
 
-Au_real = second_order(X, Y, 2 * np.pi / a_Au)                     ### IMPORTANT ###
-Cr_real = fourth_order_30deg(X, Y, 2 * np.pi / a_Cr)                ### IMPORTANT ###
+Au_real = third_order(X, Y, 2 * np.pi / a_Au)                     ### IMPORTANT ###
+Cr_real = sixth_order_30deg(X, Y, 2 * np.pi / a_Cr)                ### IMPORTANT ###
 moire_real = Au_real * Cr_real
 
 Cr_reciprocal = np.fft.fftshift(np.fft.fft2(Cr_real))

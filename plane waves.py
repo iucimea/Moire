@@ -26,26 +26,38 @@ def third_order(kx, ky, scale):
             np.cos(-0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)) ** 3
 
 
-def first_order_rotated(kx, ky, scale):
+def fourth_order(kx, ky, scale):
+    return (np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) *
+            np.cos(-0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)) ** 4
+
+
+def first_order_30deg(kx, ky, scale):
     return np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)
 
-def second_order_rotated(kx, ky, scale):
+def second_order_30deg(kx, ky, scale):
     return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 2
 
-def third_order_rotated(kx, ky, scale):
+def third_order_30deg(kx, ky, scale):
     return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
            * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 3
 
+
+def fourth_order_30deg(kx, ky, scale):
+    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
+           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
+           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 4
+
+
 a_Cr = 0.604
 a_Au = 0.288
 
-Au_real = second_order(X, Y, 2 * np.pi / a_Au)                      ### IMPORTANT ###
-Cr_real = third_order_rotated(X, Y, 2 * np.pi / a_Cr)              ### IMPORTANT ###
+Au_real = second_order(X, Y, 2 * np.pi / a_Au)                     ### IMPORTANT ###
+Cr_real = fourth_order_30deg(X, Y, 2 * np.pi / a_Cr)                ### IMPORTANT ###
 moire_real = Au_real * Cr_real
 
 Cr_reciprocal = np.fft.fftshift(np.fft.fft2(Cr_real))

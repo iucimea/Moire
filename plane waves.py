@@ -1,10 +1,12 @@
+import numpy as np
+from pylab import meshgrid, cm, imshow, contour, clabel, figure, title, show
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch
 
-x = np.linspace(-10, 10, 1000)
-y = np.linspace(-10, 10, 1000)
+x = np.linspace(0, 20, 1000)
+y = np.linspace(0, 20, 1000)
 X, Y = meshgrid(x, y)
 
 # region Function Definitions
@@ -69,8 +71,8 @@ def sixth_order_30deg(kx, ky, scale):
 a_Cr = 0.604
 a_Au = 0.288
 
-Au_real = third_order(X, Y, 2 * np.pi / a_Au)                     ### IMPORTANT ###
-Cr_real = sixth_order_30deg(X, Y, 2 * np.pi / a_Cr)                ### IMPORTANT ###
+Au_real = third_order(X, Y, 2 * np.pi / a_Au)                ### IMPORTANT ###
+Cr_real = third_order_30deg(X, Y, 2 * np.pi / a_Cr)                ### IMPORTANT ###
 moire_real = Au_real * Cr_real
 
 Cr_reciprocal = np.fft.fftshift(np.fft.fft2(Cr_real))
@@ -79,14 +81,14 @@ moire_reciprocal = np.fft.fftshift(np.fft.fft2(moire_real))
 
 fig = plt.figure(layout="constrained")
 ax_dict = fig.subplot_mosaic(
-    [#['Au', 'Au_reciprocal'],
+    [['Au', 'Au_reciprocal'],
      ['Cr', 'Cr_reciprocal'],
      ['moire_real', 'moire_reciprocal']]
 )
 
-#ax_dict['Au'].imshow(Au_real, cmap=cm.jet)
-#ax_dict['Au'].set_title('Au')
-#ax_dict['Au_reciprocal'].imshow(abs(Au_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
+ax_dict['Au'].imshow(Au_real, cmap=cm.jet)
+ax_dict['Au'].set_title('Au')
+ax_dict['Au_reciprocal'].imshow(abs(Au_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
 ax_dict['Cr'].imshow(Cr_real, cmap=plt.cm.hot)
 ax_dict['Cr'].set_title('Cr')
 ax_dict['Cr_reciprocal'].imshow(abs(Cr_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)

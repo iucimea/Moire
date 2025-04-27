@@ -9,7 +9,7 @@ x = np.linspace(0, 20, 1000)
 y = np.linspace(0, 20, 1000)
 X, Y = meshgrid(x, y)
 
-# region Function Definitions
+# Function Definitions
 def first_order(kx, ky, scale):
     return np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) * np.cos(
         -0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)

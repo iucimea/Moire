@@ -5,74 +5,20 @@ import matplotlib.cbook as cbook
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch
 
-x = np.linspace(0, 20, 1000)
-y = np.linspace(0, 20, 1000)
+x = np.linspace(0, 10, 1000)
+y = np.linspace(0, 10, 1000)
 X, Y = meshgrid(x, y)
 
-# Function Definitions
-def first_order(kx, ky, scale):
-    return np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) * np.cos(
-        -0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)
+a_Cr = .604 #nm 
+a_Au = .288 #nm
 
+def lattice(kx, ky, scale, theta, order):
+    return (np.cos(scale* kx * np.cos(theta * np.pi / 180) + scale* ky * np.sin(theta * np.pi / 180)) \
+            * np.cos(scale* kx * np.cos((120 + theta) * np.pi / 180) + scale* ky * np.sin((120 + theta) * np.pi / 180)) \
+            * np.cos(scale* kx * np.cos((240 + theta) * np.pi / 180) + scale* ky * np.sin((240 + theta) * np.pi / 180))) ** order 
 
-def second_order(kx, ky, scale):
-    return (np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) * np.cos(
-        -0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)) ** 2
-
-
-def third_order(kx, ky, scale):
-    return (np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) *
-            np.cos(-0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)) ** 3
-
-
-def fourth_order(kx, ky, scale):
-    return (np.cos(kx * scale) * np.cos(-0.5 * kx * scale + np.sqrt(3) / 2 * ky * scale) *
-            np.cos(-0.5 * kx * scale - np.sqrt(3) / 2 * ky * scale)) ** 4
-
-
-def first_order_30deg(kx, ky, scale):
-    return np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)
-
-
-def second_order_30deg(kx, ky, scale):
-    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 2
-
-
-def third_order_30deg(kx, ky, scale):
-    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 3
-
-
-def fourth_order_30deg(kx, ky, scale):
-    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 4
-
-
-def fifth_order_30deg(kx, ky, scale):
-    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 5
-
-
-def sixth_order_30deg(kx, ky, scale):
-    return (np.cos(kx * np.cos(30 * np.pi / 180) * scale + ky * np.sin(30 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(150 * np.pi / 180) * scale + ky * np.sin(150 * np.pi / 180) * scale) \
-           * np.cos(kx * np.cos(270 * np.pi / 180) * scale + ky * np.sin(270 * np.pi / 180) * scale)) ** 6
-
-
-# endregion
-
-a_Cr = 0.604
-a_Au = 0.288
-
-Au_real = third_order(X, Y, 2 * np.pi / a_Au)                ### IMPORTANT ###
-Cr_real = third_order_30deg(X, Y, 2 * np.pi / a_Cr)                ### IMPORTANT ###
+Au_real = lattice(X, Y, 2 * np.pi / a_Au, 0, 5)                
+Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, 0, 5)                
 moire_real = Au_real * Cr_real
 
 Cr_reciprocal = np.fft.fftshift(np.fft.fft2(Cr_real))

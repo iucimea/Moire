@@ -24,7 +24,7 @@ def lattice(kx, ky, scale, theta, order):
             * np.cos(scale* kx * np.cos((240 + theta) * np.pi / 180) + scale* ky * np.sin((240 + theta) * np.pi / 180))) ** order 
 
 Au_real = lattice(X, Y, 2 * np.pi / a_Au, 20, 3)                
-Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, 50, 6)                
+Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, 20, 6)                
 moire_real = Au_real * Cr_real
 
 # Create the reciprocal space lattices
@@ -42,11 +42,11 @@ Au_reciprocal_Bragg_spots = peak_local_max(Au_reciprocal_array, min_distance=10,
 Cr_reciprocal_Bragg_spots = peak_local_max(Cr_reciprocal_array, min_distance=10, threshold_abs=3000)
 moire_reciprocal_Bragg_spots = peak_local_max(moire_reciprocal_array, min_distance=10, threshold_abs=3000)
 
-# #plot Moiré pattern in real space
-# plt.figure(figsize=(8, 8))
-# plt.title('Real Space')
-# plt.imshow(moire_real, cmap=cm.jet)
-# plt.show()
+# plot Moiré pattern in real space
+plt.figure(figsize=(8, 8))
+plt.title('Real Space')
+plt.imshow(moire_real, cmap=cm.jet)
+plt.show()
 
 # Calculate distances between all pairs of Bragg spots
 distances = cdist(Au_reciprocal_Bragg_spots, Cr_reciprocal_Bragg_spots)
@@ -139,59 +139,64 @@ for Au_peak, Cr_peak in zip(closest_Au_Bragg_spots[13:19], closest_Cr_Bragg_spot
     plt.plot(Au_peak[1], Au_peak[0], 'co', markersize=6, markeredgewidth=1, markerfacecolor='none')
     plt.plot(Cr_peak[1], Cr_peak[0], 'co', markersize=6, markeredgewidth=1, markerfacecolor='none')
 
-# Plot vectors for the first, second, and third closest pairs
-# First closest pairs
-for i in range(1, 7):
+# Plot vectors for the first closest pairs
+for i in range(len(first_closest_vectors)):  # Iterate over the actual size of the list
+    vector = first_closest_vectors[i]
     plt.arrow(
-        closest_Cr_Bragg_spots[i][1], closest_Cr_Bragg_spots[i][0],  # Start point (x, y)
-        closest_Au_Bragg_spots[i][1] - closest_Cr_Bragg_spots[i][1],  # Delta x
-        closest_Au_Bragg_spots[i][0] - closest_Cr_Bragg_spots[i][0],  # Delta y
+        closest_Cr_Bragg_spots[i + 1][1], closest_Cr_Bragg_spots[i + 1][0],  # Start point (x, y)
+        vector[1],  # Delta x
+        vector[0],  # Delta y
         color='magenta', width=0.2, head_width=2, length_includes_head=True
     )
 
 # Second closest pairs
-for i in range(7, 13):
+for i in range(len(second_closest_vectors)):
+    vector = second_closest_vectors[i]
     plt.arrow(
-        closest_Cr_Bragg_spots[i][1], closest_Cr_Bragg_spots[i][0],  # Start point (x, y)
-        closest_Au_Bragg_spots[i][1] - closest_Cr_Bragg_spots[i][1],  # Delta x
-        closest_Au_Bragg_spots[i][0] - closest_Cr_Bragg_spots[i][0],  # Delta y
+        closest_Cr_Bragg_spots[i + 7][1], closest_Cr_Bragg_spots[i + 7][0],  # Start point (x, y)
+        vector[1],  # Delta x
+        vector[0],  # Delta y
         color='green', width=0.2, head_width=2, length_includes_head=True
     )
 
 # Third closest pairs
-for i in range(13, 19):
+for i in range(len(third_closest_vectors)):
+    vector = third_closest_vectors[i]
     plt.arrow(
-        closest_Cr_Bragg_spots[i][1], closest_Cr_Bragg_spots[i][0],  # Start point (x, y)
-        closest_Au_Bragg_spots[i][1] - closest_Cr_Bragg_spots[i][1],  # Delta x
-        closest_Au_Bragg_spots[i][0] - closest_Cr_Bragg_spots[i][0],  # Delta y
+        closest_Cr_Bragg_spots[i + 13][1], closest_Cr_Bragg_spots[i + 13][0],  # Start point (x, y)
+        vector[1],  # Delta x
+        vector[0],  # Delta y
         color='cyan', width=0.2, head_width=2, length_includes_head=True
     )
 
 # Plot the vectors at the origin
 # First closest pairs
 for i in range(1, 7):
-    vector = closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i]
+    vector = first_closest_vectors[i - 1]  # Adjust index for first_closest_vectors
     plt.arrow(
         center[0], center[1],  # Start at origin
-        vector[1], vector[0],  # Delta x and delta y
+        vector[1],  # Delta x
+        vector[0],  # Delta y
         color='magenta', width=0.2, head_width=2, length_includes_head=True
     )
 
 # Second closest pairs
 for i in range(7, 13):
-    vector = closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i]
+    vector = second_closest_vectors[i - 7]  # Adjust index for second_closest_vectors
     plt.arrow(
-        center[0], center[1], # Start at origin
-        vector[1], vector[0],
+        center[0], center[1],  # Start at origin
+        vector[1],  # Delta x
+        vector[0],  # Delta y
         color='green', width=0.2, head_width=2, length_includes_head=True
     )
 
 # Third closest pairs
 for i in range(13, 19):
-    vector = closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i]
+    vector = third_closest_vectors[i - 13]  # Adjust index for third_closest_vectors
     plt.arrow(
-        center[0], center[1], # Start at origin
-        vector[1], vector[0],
+        center[0], center[1],  # Start at origin
+        vector[1],  # Delta x
+        vector[0],  # Delta y
         color='cyan', width=0.2, head_width=2, length_includes_head=True
     )
 
@@ -235,3 +240,33 @@ print(f"Cr_reciprocal_Bragg_spots: {len(Cr_reciprocal_Bragg_spots)}")
 # ax_dict['moire_reciprocal'].axis('off')
 
 # plt.show()
+
+# Define the size of the new reciprocal space image
+reciprocal_space_size = Au_reciprocal_array.shape
+new_reciprocal_space = np.zeros(reciprocal_space_size)
+
+# Define a 2D Gaussian function
+def gaussian_2d(x, y, x0, y0, sigma):
+    return np.exp(-((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
+
+# Generate a grid for the reciprocal space
+x = np.arange(reciprocal_space_size[1])
+y = np.arange(reciprocal_space_size[0])
+X, Y = np.meshgrid(x, y)
+
+# Add Gaussian profiles at the tips of the vectors
+sigma = 1  # Standard deviation of the Gaussian
+for vectors, color in zip([first_closest_vectors, second_closest_vectors, third_closest_vectors], ['magenta', 'green', 'cyan']):
+    for vector in vectors:
+        tip_x = int(center[0] + vector[1])  # X-coordinate of the vector tip
+        tip_y = int(center[1] + vector[0])  # Y-coordinate of the vector tip
+        if 0 <= tip_x < reciprocal_space_size[1] and 0 <= tip_y < reciprocal_space_size[0]:
+            new_reciprocal_space += gaussian_2d(X, Y, tip_x, tip_y, sigma)
+
+# Plot the new reciprocal space image
+plt.figure(figsize=(10, 10))
+plt.title('New Reciprocal Space with Gaussian Profiles at Vector Tips')
+plt.imshow(new_reciprocal_space, cmap=cm.magma, extent=(-15, 15, -15, 15))
+plt.xlabel('kx')
+plt.ylabel('ky')
+plt.show()

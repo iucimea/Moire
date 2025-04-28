@@ -139,7 +139,7 @@ for Au_peak, Cr_peak in zip(closest_Au_Bragg_spots[13:19], closest_Cr_Bragg_spot
     plt.plot(Au_peak[1], Au_peak[0], 'co', markersize=6, markeredgewidth=1, markerfacecolor='none')
     plt.plot(Cr_peak[1], Cr_peak[0], 'co', markersize=6, markeredgewidth=1, markerfacecolor='none')
 
-# Plot vectors for the first closest pairs
+# Plot vectors connecting the closest Bragg spots
 for i in range(len(first_closest_vectors)):  # Iterate over the actual size of the list
     vector = first_closest_vectors[i]
     plt.arrow(
@@ -149,7 +149,6 @@ for i in range(len(first_closest_vectors)):  # Iterate over the actual size of t
         color='magenta', width=0.2, head_width=2, length_includes_head=True
     )
 
-# Second closest pairs
 for i in range(len(second_closest_vectors)):
     vector = second_closest_vectors[i]
     plt.arrow(
@@ -159,7 +158,6 @@ for i in range(len(second_closest_vectors)):
         color='green', width=0.2, head_width=2, length_includes_head=True
     )
 
-# Third closest pairs
 for i in range(len(third_closest_vectors)):
     vector = third_closest_vectors[i]
     plt.arrow(
@@ -170,7 +168,6 @@ for i in range(len(third_closest_vectors)):
     )
 
 # Plot the vectors at the origin
-# First closest pairs
 for i in range(1, 7):
     vector = first_closest_vectors[i - 1]  # Adjust index for first_closest_vectors
     plt.arrow(
@@ -180,7 +177,6 @@ for i in range(1, 7):
         color='magenta', width=0.2, head_width=2, length_includes_head=True
     )
 
-# Second closest pairs
 for i in range(7, 13):
     vector = second_closest_vectors[i - 7]  # Adjust index for second_closest_vectors
     plt.arrow(
@@ -190,7 +186,6 @@ for i in range(7, 13):
         color='green', width=0.2, head_width=2, length_includes_head=True
     )
 
-# Third closest pairs
 for i in range(13, 19):
     vector = third_closest_vectors[i - 13]  # Adjust index for third_closest_vectors
     plt.arrow(
@@ -219,54 +214,40 @@ plt.show()
 print(f"Au_reciprocal_Bragg_spots: {len(Au_reciprocal_Bragg_spots)}")
 print(f"Cr_reciprocal_Bragg_spots: {len(Cr_reciprocal_Bragg_spots)}")
 
+# Create the moiré pattern from the selected difference vectors
+# Modify the new_lattice function to accept a vector
+def new_lattice(kx, ky, vector, order):
+    scale = 2 * np.pi / np.linalg.norm(vector)  # Inverse of the length of the vector
+    theta = np.arctan2(vector[0], vector[1]) * 180 / np.pi  # Angle in degrees
+    return (np.cos(scale * kx * np.cos(theta * np.pi / 180) + scale * ky * np.sin(theta * np.pi / 180)) \
+            * np.cos(scale * kx * np.cos((120 + theta) * np.pi / 180) + scale * ky * np.sin((120 + theta) * np.pi / 180)) \
+            * np.cos(scale * kx * np.cos((240 + theta) * np.pi / 180) + scale * ky * np.sin((240 + theta) * np.pi / 180))) ** order
 
-# fig = plt.figure(layout='constrained', figsize=(10, 10))
-# fig.suptitle('Moire pattern and its reciprocal lattice', fontsize=16)
-# ax_dict = fig.subplot_mosaic(
-#     [['Au', 'Au_reciprocal'],
-#      ['Cr', 'Cr_reciprocal'],
-#      ['moire_real', 'moire_reciprocal']]
-# )
-
-# ax_dict['Au'].imshow(Au_real, cmap=cm.jet)
-# ax_dict['Au'].set_title('Au')
-# ax_dict['Au_reciprocal'].imshow(abs(Au_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
-# ax_dict['Cr'].imshow(Cr_real, cmap=plt.cm.hot)
-# ax_dict['Cr'].set_title('Cr')
-# ax_dict['Cr_reciprocal'].imshow(abs(Cr_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
-# ax_dict['moire_real'].imshow(moire_real, cmap=cm.jet)
-# ax_dict['moire_real'].set_title('Moire')
-# ax_dict['moire_reciprocal'].imshow(abs(moire_reciprocal), vmin=0, vmax=10000, cmap=cm.jet)
-# ax_dict['moire_reciprocal'].axis('off')
-
-# plt.show()
-
-# Define the size of the new reciprocal space image
-reciprocal_space_size = Au_reciprocal_array.shape
-new_reciprocal_space = np.zeros(reciprocal_space_size)
-
-# Define a 2D Gaussian function
-def gaussian_2d(x, y, x0, y0, sigma):
-    return np.exp(-((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
-
-# Generate a grid for the reciprocal space
-x = np.arange(reciprocal_space_size[1])
-y = np.arange(reciprocal_space_size[0])
-X, Y = np.meshgrid(x, y)
-
-# Add Gaussian profiles at the tips of the vectors
-sigma = 1  # Standard deviation of the Gaussian
-for vectors, color in zip([first_closest_vectors, second_closest_vectors, third_closest_vectors], ['magenta', 'green', 'cyan']):
+# Modify the new_lattice function to accept three vectors together
+def new_lattice(kx, ky, vectors, order):
+    lattice_sum = np.ones_like(kx)
     for vector in vectors:
-        tip_x = int(center[0] + vector[1])  # X-coordinate of the vector tip
-        tip_y = int(center[1] + vector[0])  # Y-coordinate of the vector tip
-        if 0 <= tip_x < reciprocal_space_size[1] and 0 <= tip_y < reciprocal_space_size[0]:
-            new_reciprocal_space += gaussian_2d(X, Y, tip_x, tip_y, sigma)
+        scale = np.linalg.norm(vector)
+        theta = np.arctan2(vector[0], vector[1]) * 180 / np.pi  # Angle in degrees
+        lattice_sum *= (np.cos(scale * kx * np.cos(theta * np.pi / 180) + scale * ky * np.sin(theta * np.pi / 180)) \
+                * np.cos(scale * kx * np.cos((120 + theta) * np.pi / 180) + scale * ky * np.sin((120 + theta) * np.pi / 180)) \
+                * np.cos(scale * kx * np.cos((240 + theta) * np.pi / 180) + scale * ky * np.sin((240 + theta) * np.pi / 180))) ** order
+    return lattice_sum
 
-# Plot the new reciprocal space image
-plt.figure(figsize=(10, 10))
-plt.title('New Reciprocal Space with Gaussian Profiles at Vector Tips')
-plt.imshow(new_reciprocal_space, cmap=cm.magma, extent=(-15, 15, -15, 15))
-plt.xlabel('kx')
-plt.ylabel('ky')
+moire_vectors= [first_closest_vectors[0], second_closest_vectors[0], third_closest_vectors[0]]
+
+# Compute the moiré lattice
+moire_lattice_computed = new_lattice(X, Y, moire_vectors, 1)
+
+# Plot the computed moiré lattices
+fig, axes = plt.subplots(1, 2, figsize=(32, 8))
+
+# Original moiré pattern
+axes[0].set_title('Original Moiré Lattice')
+axes[0].imshow(moire_real, cmap=cm.jet)
+
+# Combined moiré lattice
+axes[1].set_title('Computed Moiré Lattice')
+axes[1].imshow(moire_lattice_computed, cmap=cm.jet)
+
 plt.show()

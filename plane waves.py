@@ -11,18 +11,20 @@ from scipy.spatial.distance import cdist
 x = np.linspace(-15, 15, 2000)
 y = np.linspace(-15, 15, 2000)
 X, Y = meshgrid(x, y)
+center = (X.shape[1] // 2, Y.shape[0] // 2)
 
+# Define the lattice constants for Au and Cr
 a_Cr = .604 #nm 
 a_Au = .288 #nm
 
+# Create the real space lattices
 def lattice(kx, ky, scale, theta, order):
     return (np.cos(scale* kx * np.cos(theta * np.pi / 180) + scale* ky * np.sin(theta * np.pi / 180)) \
             * np.cos(scale* kx * np.cos((120 + theta) * np.pi / 180) + scale* ky * np.sin((120 + theta) * np.pi / 180)) \
             * np.cos(scale* kx * np.cos((240 + theta) * np.pi / 180) + scale* ky * np.sin((240 + theta) * np.pi / 180))) ** order 
 
-# Create the real space lattices
 Au_real = lattice(X, Y, 2 * np.pi / a_Au, 20, 3)                
-Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, 20, 6)                
+Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, 50, 6)                
 moire_real = Au_real * Cr_real
 
 # Create the reciprocal space lattices
@@ -63,17 +65,17 @@ second_closest_distances = [distances[closest_pairs_indices[0][i], closest_pairs
 third_closest_distances = [distances[closest_pairs_indices[0][i], closest_pairs_indices[1][i]] for i in range(13, 19)]
 
 # Print the position of the central Bragg spots
-print("Central Bragg position in Au:")
+print("\nCentral Bragg position in Au:")
 print(closest_Au_Bragg_spots[0])
 
-print("Central Bragg position in Cr:")
+print("\nCentral Bragg position in Cr:")
 print(closest_Cr_Bragg_spots[0])
 
 # Print the distances
-print("Center Bragg distance:")
+print("\nCentral Bragg distance:")
 print(center_Bragg_distance)
 
-print("First closest pair distance:")
+print("\nFirst closest pair distance:")
 print(first_closest_distances)
 
 print("\nSecond six closest pairs distances:")
@@ -83,18 +85,12 @@ print("\nThird six closest pairs distances:")
 print(third_closest_distances)
 
 # Compute the vectors for the closest pairs
-first_closest_vectors = [
-    closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i] for i in range(1, 7)
-]
-second_closest_vectors = [
-    closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i] for i in range(7, 13)
-]
-third_closest_vectors = [
-    closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i] for i in range(13, 19)
-]
+first_closest_vectors = [closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i] for i in range(1, 7)]
+second_closest_vectors = [closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i] for i in range(7, 13)]
+third_closest_vectors = [closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i] for i in range(13, 19)]
 
 # Print the vectors
-print("First closest pair vectors:")
+print("\nFirst closest pair vectors:")
 for vector in first_closest_vectors:
     print(vector)
 
@@ -124,7 +120,7 @@ for peak in Au_reciprocal_Bragg_spots:
 for peak in Cr_reciprocal_Bragg_spots:
     plt.plot(peak[1], peak[0], 'r+', markersize=4, markeredgewidth=1)
 
-# Center Bragg spots
+# Central Bragg spots
 plt.plot(closest_Au_Bragg_spots[0][1], closest_Au_Bragg_spots[0][0], 'wo', markersize=6, markeredgewidth=1, markerfacecolor='none')
 plt.plot(closest_Cr_Bragg_spots[0][1], closest_Cr_Bragg_spots[0][0], 'wo', markersize=6, markeredgewidth=1, markerfacecolor='none')
 
@@ -176,7 +172,7 @@ for i in range(13, 19):
 for i in range(1, 7):
     vector = closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i]
     plt.arrow(
-        0, 0,  # Start at origin
+        center[0], center[1],  # Start at origin
         vector[1], vector[0],  # Delta x and delta y
         color='magenta', width=0.2, head_width=2, length_includes_head=True
     )
@@ -185,7 +181,7 @@ for i in range(1, 7):
 for i in range(7, 13):
     vector = closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i]
     plt.arrow(
-        0, 0,
+        center[0], center[1], # Start at origin
         vector[1], vector[0],
         color='green', width=0.2, head_width=2, length_includes_head=True
     )
@@ -194,7 +190,7 @@ for i in range(7, 13):
 for i in range(13, 19):
     vector = closest_Au_Bragg_spots[i] - closest_Cr_Bragg_spots[i]
     plt.arrow(
-        0, 0,
+        center[0], center[1], # Start at origin
         vector[1], vector[0],
         color='cyan', width=0.2, head_width=2, length_includes_head=True
     )

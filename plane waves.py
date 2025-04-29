@@ -24,7 +24,8 @@ def lattice(kx, ky, scale, theta, order):
             * np.cos(scale* kx * np.cos((240 + theta) * np.pi / 180) + scale* ky * np.sin((240 + theta) * np.pi / 180))) ** order
 
 # Create the real space Au lattice
-Au_real = lattice(X, Y, 2 * np.pi / a_Au, 20, 3)
+theta_Au = 20.0  # degrees
+Au_real = lattice(X, Y, 2 * np.pi / a_Au, theta_Au, 3)
 
 # Create the reciprocal space Au lattice
 Au_reciprocal = np.fft.fftshift(np.fft.fft2(Au_real))
@@ -33,11 +34,11 @@ Au_reciprocal = np.fft.fftshift(np.fft.fft2(Au_real))
 theta_range = np.linspace(19, 21, 3)
 
 # Loop over the theta values
-for theta in theta_range:
-    print(f"Processing theta = {theta:.2f} degrees")
+for theta_Cr in theta_range:
+    print(f"Processing theta = {theta_Cr:.2f} degrees")
 
     # Recompute Cr_real with the current theta
-    Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, theta, 6)
+    Cr_real = lattice(X, Y, 2 * np.pi / a_Cr, theta_Cr, 6)
     moire_real = Au_real * Cr_real
 
     # Create the reciprocal space lattices
@@ -249,7 +250,7 @@ for theta in theta_range:
 
 
     # Plot Real Space
-    axes[1].set_title('Real Space' f'$\theta$''={theta:.2f}°')
+    axes[1].set_title(rf'Real Space ($\theta={theta_Au-theta_Cr:.2f}^\circ$)')
     axes[1].imshow(moire_real, cmap=cm.jet)
     axes[1].set_xlabel('x')
     axes[1].set_ylabel('y')
@@ -262,5 +263,5 @@ for theta in theta_range:
 
     # Adjust layout and save the figure
     plt.tight_layout()
-    plt.savefig(f"theta_{theta:.2f}.png")  # Save the figure with the current theta value
+    plt.savefig(f"theta_{theta_Au-theta_Cr:.2f}.png")  # Save the figure with the current theta value
     plt.show()

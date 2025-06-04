@@ -29,14 +29,14 @@ def lattice_disloc(kx, ky, scale, theta, order):
             * np.cos(scale* kx * np.cos((240 + theta) * np.pi / 180) + scale* ky * np.sin((240 + theta) * np.pi / 180))) ** order
 
 # Create the real space Au lattice
-theta_Au = 50.0  # degrees
+theta_Au = 20.0  # degrees
 Au_real = lattice(X, Y, 2 * np.pi / a_Au, theta_Au, 3)
 
 # Create the reciprocal space Au lattice
 Au_reciprocal = np.fft.fftshift(np.fft.fft2(Au_real))
 
 # Define the range of theta values
-theta_range = np.linspace(20, 20, 1)
+theta_range = np.linspace(50, 53, 4)  # degrees
 
 # Loop over the theta values
 for theta_Cr in theta_range:
@@ -255,7 +255,7 @@ for theta_Cr in theta_range:
 
 
     # Plot Real Space
-    axes[1].set_title(rf'Real Space ($\theta={theta_Au-theta_Cr:.2f}^\circ$)')
+    axes[1].set_title(rf'Real Space ($\theta={theta_Cr-theta_Au:.2f}^\circ$)')
     axes[1].imshow(moire_real, cmap=cm.jet)
     axes[1].set_xlabel('x')
     axes[1].set_ylabel('y')
@@ -268,5 +268,5 @@ for theta_Cr in theta_range:
 
     # Adjust layout and save the figure
     plt.tight_layout()
-    plt.savefig(f"theta_{theta_Au-theta_Cr:.2f}.png")  # Save the figure with the current theta value
+    plt.savefig(f"theta_{theta_Cr-theta_Au:.2f}.png")  # Save the figure with the current theta value
     plt.show()

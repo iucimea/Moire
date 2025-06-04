@@ -255,7 +255,11 @@ for theta_Cr in theta_range:
 
 
     # Plot Real Space
+<<<<<<< HEAD
     axes[1].set_title(rf'Real Space ($\theta={theta_Cr-theta_Au:.2f}^\circ$)')
+=======
+    axes[1].set_title(rf'Real Space ($\theta={theta_Au-theta_Cr:.2f}^\circ$)')
+>>>>>>> 2a2de91519779cff5916e0b07291aad7193b2508
     axes[1].imshow(moire_real, cmap=cm.jet)
     axes[1].set_xlabel('x')
     axes[1].set_ylabel('y')
@@ -268,5 +272,9 @@ for theta_Cr in theta_range:
 
     # Adjust layout and save the figure
     plt.tight_layout()
+<<<<<<< HEAD
     plt.savefig(f"theta_{theta_Cr-theta_Au:.2f}.png")  # Save the figure with the current theta value
+=======
+    plt.savefig(f"theta_{theta_Au-theta_Cr:.2f}.png")  # Save the figure with the current theta value
+>>>>>>> 2a2de91519779cff5916e0b07291aad7193b2508
     plt.show()
